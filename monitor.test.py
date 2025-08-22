@@ -1,29 +1,26 @@
 import unittest
 from monitor import vitals_ok
 
-
 class MonitorTest(unittest.TestCase):
     def test_temperature_out_of_range(self):
-        status, msg = vitals_ok(103, 80, 95)
+        status, msgs = vitals_ok({'temperature': 103, 'pulseRate': 80, 'spo2': 95})
         self.assertFalse(status)
-        self.assertEqual(msg, 'Temperature critical!')
+        self.assertIn('Temperature critical!', msgs)
 
     def test_pulse_out_of_range(self):
-        status, msg = vitals_ok(98, 120, 95)
+        status, msgs = vitals_ok({'temperature': 98, 'pulseRate': 120, 'spo2': 95})
         self.assertFalse(status)
-        self.assertEqual(msg, 'Pulse Rate is out of range!')
+        self.assertIn('Pulse Rate is out of range!', msgs)
 
     def test_spo2_out_of_range(self):
-        status, msg = vitals_ok(98, 80, 85)
+        status, msgs = vitals_ok({'temperature': 98, 'pulseRate': 80, 'spo2': 85})
         self.assertFalse(status)
-        self.assertEqual(msg, 'Oxygen Saturation out of range!')
+        self.assertIn('Oxygen Saturation out of range!', msgs)
 
     def test_all_vitals_normal(self):
-        status, msg = vitals_ok(98.6, 75, 98)
+        status, msgs = vitals_ok({'temperature': 98.6, 'pulseRate': 75, 'spo2': 98})
         self.assertTrue(status)
-        self.assertEqual(msg, 'All vitals are normal')
-
+        self.assertIn('All vitals are normal', msgs)
 
 if __name__ == '__main__':
-  unittest.main()
-
+    unittest.main()
