@@ -1,7 +1,7 @@
 import sys
 from time import sleep
 
-def vitals_status(temperature, pulseRate, spo2):
+def vitals_ok(temperature, pulseRate, spo2):
     #Pure function: returns status and message based on vitals.
     if temperature > 102 or temperature < 95:
         return False, 'Temperature critical!'
