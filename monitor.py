@@ -38,7 +38,7 @@ def show_alert(msgs, cycles=6, printer=None, flusher=None, sleeper=None):
     for _ in range(cycles):
         for symbol in ['* ', ' *']:
             printer('\r' + symbol, end='')
-            flusher()
+            flasher()
             sleeper(1)
 
 # Example mock usage for testing
@@ -46,7 +46,7 @@ def mock_printer(msg, end='\n'):
     mock_printer.output.append((msg, end))
 mock_printer.output = []
 
-def mock_flusher():
+def mock_flasher():
     mock_printer.output.append(('flush', None))
 
 def mock_sleeper(seconds):
@@ -57,4 +57,4 @@ if __name__ == "__main__":
     vitals = {'temperature': 101, 'pulseRate': 55, 'spo2': 95}
     status, messages = vitals_ok(vitals)
     if not status:
-        show_alert(messages, printer=mock_printer, flusher=mock_flusher, sleeper=mock_sleeper)
+        show_alert(messages, printer=mock_printer, flasher=mock_flasher, sleeper=mock_sleeper)
