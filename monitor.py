@@ -19,3 +19,5 @@ def show_alert(msg):
 
 # Example usage:
 status, message = vitals_ok(101, 55, 95)
+if not status:
+    show_alert(message)
