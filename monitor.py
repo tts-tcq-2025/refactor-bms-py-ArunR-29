@@ -1,12 +1,20 @@
 def vitals_ok(temperature, pulseRate, spo2):
-    """Pure function: returns status and message based on vitals."""
+    """Checks all vitals and returns overall status and all messages."""
+    messages = []
+    status = True
+
     if temperature > 102 or temperature < 95:
-        return False, 'Temperature critical!'
+        messages.append('Temperature critical!')
+        status = False
     if pulseRate < 60 or pulseRate > 100:
-        return False, 'Pulse Rate is out of range!'
+        messages.append('Pulse Rate is out of range!')
+        status = False
     if spo2 < 90:
-        return False, 'Oxygen Saturation out of range!'
-    return True, 'All vitals are normal'
+        messages.append('Oxygen Saturation out of range!')
+        status = False
+    if status:
+        messages.append('All vitals are normal')
+    return status, messages
 
 def show_alert(msg, cycles=6, printer=None, flusher=None, sleeper=None):
     """Handles alert animation and printing. Can be mocked for testing."""
