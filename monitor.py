@@ -1,4 +1,6 @@
-def vitals_status(temperature, pulseRate, spo2):
+from time import sleep
+import sys
+def vitals_ok(temperature, pulseRate, spo2):
     if temperature > 102 or temperature < 95:
         return False, 'Temperature critical!'
     if pulseRate < 60 or pulseRate > 100:
@@ -8,8 +10,6 @@ def vitals_status(temperature, pulseRate, spo2):
     return True, 'All vitals are normal'
 
 def show_alert(msg):
-    from time import sleep
-    import sys
     print(msg)
     for _ in range(6):
         for symbol in ['* ', ' *']:
@@ -17,8 +17,5 @@ def show_alert(msg):
             sys.stdout.flush()
             sleep(1)
 
-def vitals_ok(temperature, pulseRate, spo2):
-    status, msg = vitals_status(temperature, pulseRate, spo2)
-    if not status:
-        show_alert(msg)
-    return
+# Example usage:
+status, message = vitals_ok(101, 55, 95)
