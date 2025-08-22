@@ -1,37 +1,56 @@
-
 from time import sleep
 import sys
 
+def vitals_ok(vitals):
+    """
+    Pure function: checks all vitals and returns status and messages.
+    Easily extensible for new parameters.
+    """
+    rules = [
+        ('temperature', lambda v: v > 102 or v < 95, 'Temperature critical!'),
+        ('pulseRate', lambda v: v < 60 or v > 100, 'Pulse Rate is out of range!'),
+        ('spo2', lambda v: v < 90, 'Oxygen Saturation out of range!')
+    ]
+    messages = []
+    status = True
+    for key, check, msg in rules:
+        if key in vitals and check(vitals[key]):
+            messages.append(msg)
+            status = False
+    if status:
+        messages.append('All vitals are normal')
+    return status, messages
 
-def vitals_ok(temperature, pulseRate, spo2):
-  if temperature > 102 or temperature < 95:
-    print('Temperature critical!')
-    for i in range(6):
-      print('\r* ', end='')
-      sys.stdout.flush()
-      sleep(1)
-      print('\r *', end='')
-      sys.stdout.flush()
-      sleep(1)
-    return False
-  elif pulseRate < 60 or pulseRate > 100:
-    print('Pulse Rate is out of range!')
-    for i in range(6):
-      print('\r* ', end='')
-      sys.stdout.flush()
-      sleep(1)
-      print('\r *', end='')
-      sys.stdout.flush()
-      sleep(1)
-    return False
-  elif spo2 < 90:
-    print('Oxygen Saturation out of range!')
-    for i in range(6):
-      print('\r* ', end='')
-      sys.stdout.flush()
-      sleep(1)
-      print('\r *', end='')
-      sys.stdout.flush()
-      sleep(1)
-    return False
-  return True
+def show_alert(msgs, cycles=6, printer=None, flasher=None, sleeper=None):
+    if printer is None:
+        printer = print
+    if flasher is None:
+        import sys
+        flasher = sys.stdout.flush
+    if sleeper is None:
+        from time import sleep
+        sleeper = sleep
+    for msg in msgs:
+        printer(msg)
+    for _ in range(cycles):
+        for symbol in ['* ', ' *']:
+            printer('\r' + symbol, end='')
+            flasher()
+            sleeper(1)
+
+def mock_printer(msg, end='\n'):
+    mock_printer.output.append((msg, end))
+mock_printer.output = []
+
+def mock_flasher():
+    mock_printer.output.append(('flash', None))
+
+def mock_sleeper(seconds):
+    mock_printer.output.append(('sleep', seconds))
+
+if __name__ == "__main__":
+    vitals = {'temperature': 101, 'pulseRate': 55, 'spo2': 95}
+    status, messages = vitals_ok(vitals)
+    if not status:
+        show_alert(messages, printer=mock_printer, flasher=mock_flasher, sleeper=mock_sleeper)
+        print("Mocked output:", mock_printer.output)
